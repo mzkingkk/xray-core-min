@@ -58,9 +58,8 @@ import (
 	_ "github.com/xtls/xray-core/transport/internet/headers/tls"
 	_ "github.com/xtls/xray-core/transport/internet/headers/utp"
 
-	// JSON & TOML
+	// JSON
 	_ "github.com/xtls/xray-core/main/json"
-	_ "github.com/xtls/xray-core/main/toml"
 
 	// Load config from file or http(s)
 	_ "github.com/xtls/xray-core/main/confloader/external"

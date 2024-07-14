@@ -26,7 +26,6 @@ type TransportProtocol int32
 const (
 	TransportProtocol_TCP          TransportProtocol = 0
 	TransportProtocol_UDP          TransportProtocol = 1
-	TransportProtocol_MKCP         TransportProtocol = 2
 	TransportProtocol_WebSocket    TransportProtocol = 3
 	TransportProtocol_HTTP         TransportProtocol = 4
 	TransportProtocol_DomainSocket TransportProtocol = 5
@@ -38,7 +37,6 @@ var (
 	TransportProtocol_name = map[int32]string{
 		0: "TCP",
 		1: "UDP",
-		2: "MKCP",
 		3: "WebSocket",
 		4: "HTTP",
 		5: "DomainSocket",
@@ -47,7 +45,6 @@ var (
 	TransportProtocol_value = map[string]int32{
 		"TCP":          0,
 		"UDP":          1,
-		"MKCP":         2,
 		"WebSocket":    3,
 		"HTTP":         4,
 		"DomainSocket": 5,

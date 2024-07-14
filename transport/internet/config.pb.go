@@ -31,7 +31,6 @@ const (
 	TransportProtocol_HTTP         TransportProtocol = 4
 	TransportProtocol_DomainSocket TransportProtocol = 5
 	TransportProtocol_HTTPUpgrade  TransportProtocol = 6
-	TransportProtocol_SplitHTTP    TransportProtocol = 7
 )
 
 // Enum value maps for TransportProtocol.
@@ -44,7 +43,6 @@ var (
 		4: "HTTP",
 		5: "DomainSocket",
 		6: "HTTPUpgrade",
-		7: "SplitHTTP",
 	}
 	TransportProtocol_value = map[string]int32{
 		"TCP":          0,
@@ -54,7 +52,6 @@ var (
 		"HTTP":         4,
 		"DomainSocket": 5,
 		"HTTPUpgrade":  6,
-		"SplitHTTP":    7,
 	}
 )
 

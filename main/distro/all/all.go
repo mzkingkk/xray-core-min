@@ -62,7 +62,6 @@ import (
 	_ "github.com/xtls/xray-core/transport/internet/headers/srtp"
 	_ "github.com/xtls/xray-core/transport/internet/headers/tls"
 	_ "github.com/xtls/xray-core/transport/internet/headers/utp"
-	_ "github.com/xtls/xray-core/transport/internet/headers/wechat"
 
 	// JSON & TOML & YAML
 	_ "github.com/xtls/xray-core/main/json"

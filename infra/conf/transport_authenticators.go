@@ -10,7 +10,6 @@ import (
 	"github.com/xtls/xray-core/transport/internet/headers/srtp"
 	"github.com/xtls/xray-core/transport/internet/headers/tls"
 	"github.com/xtls/xray-core/transport/internet/headers/utp"
-	"github.com/xtls/xray-core/transport/internet/headers/wechat"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -36,12 +35,6 @@ type UTPAuthenticator struct{}
 
 func (UTPAuthenticator) Build() (proto.Message, error) {
 	return new(utp.Config), nil
-}
-
-type WechatVideoAuthenticator struct{}
-
-func (WechatVideoAuthenticator) Build() (proto.Message, error) {
-	return new(wechat.VideoConfig), nil
 }
 
 type DNSAuthenticator struct {

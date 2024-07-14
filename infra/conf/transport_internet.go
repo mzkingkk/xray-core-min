@@ -33,7 +33,6 @@ var (
 		"none":         func() interface{} { return new(NoOpAuthenticator) },
 		"srtp":         func() interface{} { return new(SRTPAuthenticator) },
 		"utp":          func() interface{} { return new(UTPAuthenticator) },
-		"wechat-video": func() interface{} { return new(WechatVideoAuthenticator) },
 		"dtls":         func() interface{} { return new(DTLSAuthenticator) },
 		"dns":          func() interface{} { return new(DNSAuthenticator) },
 	}, "type", "")

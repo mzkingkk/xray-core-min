@@ -13,7 +13,6 @@ enum TransportProtocol {
   UDP = 1;
   WebSocket = 3;
   HTTP = 4;
-  DomainSocket = 5;
 }
 
 enum DomainStrategy {

@@ -21,7 +21,6 @@ import (
 	"github.com/xtls/xray-core/transport/internet/reality"
 	"github.com/xtls/xray-core/transport/internet/tcp"
 	"github.com/xtls/xray-core/transport/internet/tls"
-	"github.com/xtls/xray-core/transport/internet/websocket"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -54,44 +53,6 @@ func (c *TCPConfig) Build() (proto.Message, error) {
 	}
 	if c.AcceptProxyProtocol {
 		config.AcceptProxyProtocol = c.AcceptProxyProtocol
-	}
-	return config, nil
-}
-
-type WebSocketConfig struct {
-	Host                string            `json:"host"`
-	Path                string            `json:"path"`
-	Headers             map[string]string `json:"headers"`
-	AcceptProxyProtocol bool              `json:"acceptProxyProtocol"`
-}
-
-// Build implements Buildable.
-func (c *WebSocketConfig) Build() (proto.Message, error) {
-	path := c.Path
-	var ed uint32
-	if u, err := url.Parse(path); err == nil {
-		if q := u.Query(); q.Get("ed") != "" {
-			Ed, _ := strconv.Atoi(q.Get("ed"))
-			ed = uint32(Ed)
-			q.Del("ed")
-			u.RawQuery = q.Encode()
-			path = u.String()
-		}
-	}
-	// If http host is not set in the Host field, but in headers field, we add it to Host Field here.
-	// If we don't do that, http host will be overwritten as address.
-	// Host priority: Host field > headers field > address.
-	if c.Host == "" && c.Headers["host"] != "" {
-		c.Host = c.Headers["host"]
-	} else if c.Host == "" && c.Headers["Host"] != "" {
-		c.Host = c.Headers["Host"]
-	}
-	config := &websocket.Config{
-		Path:                path,
-		Host:                c.Host,
-		Header:              c.Headers,
-		AcceptProxyProtocol: c.AcceptProxyProtocol,
-		Ed:                  ed,
 	}
 	return config, nil
 }
@@ -451,8 +412,6 @@ func (p TransportProtocol) Build() (string, error) {
 	switch strings.ToLower(string(p)) {
 	case "tcp":
 		return "tcp", nil
-	case "ws", "websocket":
-		return "websocket", nil
 	case "h2", "http":
 		return "http", nil
 	case "grpc", "gun":
@@ -583,7 +542,6 @@ type StreamConfig struct {
 	TLSSettings         *TLSConfig          `json:"tlsSettings"`
 	REALITYSettings     *REALITYConfig      `json:"realitySettings"`
 	TCPSettings         *TCPConfig          `json:"tcpSettings"`
-	WSSettings          *WebSocketConfig    `json:"wsSettings"`
 	HTTPSettings        *HTTPConfig         `json:"httpSettings"`
 	SocketSettings      *SocketConfig       `json:"sockopt"`
 	GRPCConfig          *GRPCConfig         `json:"grpcSettings"`
@@ -642,16 +600,6 @@ func (c *StreamConfig) Build() (*internet.StreamConfig, error) {
 		}
 		config.TransportSettings = append(config.TransportSettings, &internet.TransportConfig{
 			ProtocolName: "tcp",
-			Settings:     serial.ToTypedMessage(ts),
-		})
-	}
-	if c.WSSettings != nil {
-		ts, err := c.WSSettings.Build()
-		if err != nil {
-			return nil, errors.New("Failed to build WebSocket config.").Base(err)
-		}
-		config.TransportSettings = append(config.TransportSettings, &internet.TransportConfig{
-			ProtocolName: "websocket",
 			Settings:     serial.ToTypedMessage(ts),
 		})
 	}

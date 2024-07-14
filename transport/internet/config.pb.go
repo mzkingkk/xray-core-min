@@ -26,7 +26,6 @@ type TransportProtocol int32
 const (
 	TransportProtocol_TCP          TransportProtocol = 0
 	TransportProtocol_UDP          TransportProtocol = 1
-	TransportProtocol_WebSocket    TransportProtocol = 3
 	TransportProtocol_HTTP         TransportProtocol = 4
 )
 
@@ -35,13 +34,11 @@ var (
 	TransportProtocol_name = map[int32]string{
 		0: "TCP",
 		1: "UDP",
-		3: "WebSocket",
 		4: "HTTP",
 	}
 	TransportProtocol_value = map[string]int32{
 		"TCP":          0,
 		"UDP":          1,
-		"WebSocket":    3,
 		"HTTP":         4,
 	}
 )

@@ -9,7 +9,6 @@ import (
 
 type TransportConfig struct {
 	TCPConfig         *TCPConfig          `json:"tcpSettings"`
-	WSConfig          *WebSocketConfig    `json:"wsSettings"`
 	HTTPConfig        *HTTPConfig         `json:"httpSettings"`
 	GRPCConfig        *GRPCConfig         `json:"grpcSettings"`
 	GUNConfig         *GRPCConfig         `json:"gunSettings"`
@@ -26,17 +25,6 @@ func (c *TransportConfig) Build() (*global.Config, error) {
 		}
 		config.TransportSettings = append(config.TransportSettings, &internet.TransportConfig{
 			ProtocolName: "tcp",
-			Settings:     serial.ToTypedMessage(ts),
-		})
-	}
-
-	if c.WSConfig != nil {
-		ts, err := c.WSConfig.Build()
-		if err != nil {
-			return nil, errors.New("failed to build WebSocket config").Base(err)
-		}
-		config.TransportSettings = append(config.TransportSettings, &internet.TransportConfig{
-			ProtocolName: "websocket",
 			Settings:     serial.ToTypedMessage(ts),
 		})
 	}

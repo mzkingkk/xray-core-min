@@ -11,7 +11,6 @@ import (
 	"github.com/xtls/xray-core/common/log"
 	"github.com/xtls/xray-core/common/net"
 	"github.com/xtls/xray-core/common/protocol"
-	udp_proto "github.com/xtls/xray-core/common/protocol/udp"
 	"github.com/xtls/xray-core/common/session"
 	"github.com/xtls/xray-core/common/signal"
 	"github.com/xtls/xray-core/common/task"
@@ -20,7 +19,6 @@ import (
 	"github.com/xtls/xray-core/features/policy"
 	"github.com/xtls/xray-core/features/routing"
 	"github.com/xtls/xray-core/transport/internet/stat"
-	"github.com/xtls/xray-core/transport/internet/udp"
 )
 
 // Server is a SOCKS 5 proxy server
@@ -78,8 +76,6 @@ func (s *Server) Process(ctx context.Context, network net.Network, conn stat.Con
 	switch network {
 	case net.Network_TCP:
 		return s.processTCP(ctx, conn, dispatcher)
-	case net.Network_UDP:
-		return s.handleUDPPayload(ctx, conn, dispatcher)
 	default:
 		return errors.New("unknown network: ", network)
 	}
@@ -198,91 +194,6 @@ func (s *Server) transport(ctx context.Context, reader io.Reader, writer io.Writ
 	}
 
 	return nil
-}
-
-func (s *Server) handleUDPPayload(ctx context.Context, conn stat.Connection, dispatcher routing.Dispatcher) error {
-	if s.udpFilter != nil && !s.udpFilter.Check(conn.RemoteAddr()) {
-		errors.LogDebug(ctx, "Unauthorized UDP access from ", conn.RemoteAddr().String())
-		return nil
-	}
-	udpServer := udp.NewDispatcher(dispatcher, func(ctx context.Context, packet *udp_proto.Packet) {
-		payload := packet.Payload
-		errors.LogDebug(ctx, "writing back UDP response with ", payload.Len(), " bytes")
-
-		request := protocol.RequestHeaderFromContext(ctx)
-		if request == nil {
-			return
-		}
-
-		if payload.UDP != nil {
-			request = &protocol.RequestHeader{
-				User:    request.User,
-				Address: payload.UDP.Address,
-				Port:    payload.UDP.Port,
-			}
-		}
-
-		udpMessage, err := EncodeUDPPacket(request, payload.Bytes())
-		payload.Release()
-
-		defer udpMessage.Release()
-		if err != nil {
-			errors.LogWarningInner(ctx, err, "failed to write UDP response")
-		}
-
-		conn.Write(udpMessage.Bytes())
-	})
-
-	inbound := session.InboundFromContext(ctx)
-	if inbound != nil && inbound.Source.IsValid() {
-		errors.LogInfo(ctx, "client UDP connection from ", inbound.Source)
-	}
-
-	var dest *net.Destination
-
-	reader := buf.NewPacketReader(conn)
-	for {
-		mpayload, err := reader.ReadMultiBuffer()
-		if err != nil {
-			return err
-		}
-
-		for _, payload := range mpayload {
-			request, err := DecodeUDPPacket(payload)
-			if err != nil {
-				errors.LogInfoInner(ctx, err, "failed to parse UDP request")
-				payload.Release()
-				continue
-			}
-
-			if payload.IsEmpty() {
-				payload.Release()
-				continue
-			}
-
-			destination := request.Destination()
-
-			currentPacketCtx := ctx
-			errors.LogDebug(ctx, "send packet to ", destination, " with ", payload.Len(), " bytes")
-			if inbound != nil && inbound.Source.IsValid() {
-				currentPacketCtx = log.ContextWithAccessMessage(ctx, &log.AccessMessage{
-					From:   inbound.Source,
-					To:     destination,
-					Status: log.AccessAccepted,
-					Reason: "",
-				})
-			}
-
-			payload.UDP = &destination
-
-			if !s.cone || dest == nil {
-				dest = &destination
-			}
-
-			currentPacketCtx = protocol.ContextWithRequestHeader(currentPacketCtx, request)
-			udpServer.Dispatch(currentPacketCtx, *dest, payload)
-		}
-	}
 }
 
 func init() {

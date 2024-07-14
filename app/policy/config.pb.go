@@ -283,13 +283,6 @@ func (x *Policy_Timeout) GetHandshake() *Second {
 	return nil
 }
 
-func (x *Policy_Timeout) GetConnectionIdle() *Second {
-	if x != nil {
-		return x.ConnectionIdle
-	}
-	return nil
-}
-
 func (x *Policy_Timeout) GetUplinkOnly() *Second {
 	if x != nil {
 		return x.UplinkOnly
@@ -398,13 +391,6 @@ func (x *Policy_Buffer) ProtoReflect() protoreflect.Message {
 // Deprecated: Use Policy_Buffer.ProtoReflect.Descriptor instead.
 func (*Policy_Buffer) Descriptor() ([]byte, []int) {
 	return file_app_policy_config_proto_rawDescGZIP(), []int{1, 2}
-}
-
-func (x *Policy_Buffer) GetConnection() int32 {
-	if x != nil {
-		return x.Connection
-	}
-	return 0
 }
 
 type SystemPolicy_Stats struct {

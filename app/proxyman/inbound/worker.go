@@ -22,8 +22,6 @@ import (
 	"github.com/xtls/xray-core/transport/internet"
 	"github.com/xtls/xray-core/transport/internet/stat"
 	"github.com/xtls/xray-core/transport/internet/tcp"
-	"github.com/xtls/xray-core/transport/internet/udp"
-	"github.com/xtls/xray-core/transport/pipe"
 )
 
 type worker interface {
@@ -237,7 +235,6 @@ type udpWorker struct {
 	sync.RWMutex
 
 	proxy           proxy.Inbound
-	hub             *udp.Hub
 	address         net.Address
 	port            net.Port
 	tag             string
@@ -252,188 +249,6 @@ type udpWorker struct {
 
 	ctx  context.Context
 	cone bool
-}
-
-func (w *udpWorker) getConnection(id connID) (*udpConn, bool) {
-	w.Lock()
-	defer w.Unlock()
-
-	if conn, found := w.activeConn[id]; found && !conn.done.Done() {
-		return conn, true
-	}
-
-	pReader, pWriter := pipe.New(pipe.DiscardOverflow(), pipe.WithSizeLimit(16*1024))
-	conn := &udpConn{
-		reader: pReader,
-		writer: pWriter,
-		output: func(b []byte) (int, error) {
-			return w.hub.WriteTo(b, id.src)
-		},
-		remote: &net.UDPAddr{
-			IP:   id.src.Address.IP(),
-			Port: int(id.src.Port),
-		},
-		local: &net.UDPAddr{
-			IP:   w.address.IP(),
-			Port: int(w.port),
-		},
-		done:     done.New(),
-		uplink:   w.uplinkCounter,
-		downlink: w.downlinkCounter,
-	}
-	w.activeConn[id] = conn
-
-	conn.updateActivity()
-	return conn, false
-}
-
-func (w *udpWorker) callback(b *buf.Buffer, source net.Destination, originalDest net.Destination) {
-	id := connID{
-		src: source,
-	}
-	if originalDest.IsValid() {
-		if !w.cone {
-			id.dest = originalDest
-		}
-		b.UDP = &originalDest
-	}
-	conn, existing := w.getConnection(id)
-
-	// payload will be discarded in pipe is full.
-	conn.writer.WriteMultiBuffer(buf.MultiBuffer{b})
-
-	if !existing {
-		common.Must(w.checker.Start())
-
-		go func() {
-			ctx := w.ctx
-			sid := session.NewID()
-			ctx = c.ContextWithID(ctx, sid)
-
-			outbounds := []*session.Outbound{{}}
-			if originalDest.IsValid() {
-				outbounds[0].Target = originalDest
-			}
-			ctx = session.ContextWithOutbounds(ctx, outbounds)
-			ctx = session.ContextWithInbound(ctx, &session.Inbound{
-				Source:  source,
-				Gateway: net.UDPDestination(w.address, w.port),
-				Tag:     w.tag,
-			})
-			content := new(session.Content)
-			if w.sniffingConfig != nil {
-				content.SniffingRequest.Enabled = w.sniffingConfig.Enabled
-				content.SniffingRequest.OverrideDestinationForProtocol = w.sniffingConfig.DestinationOverride
-				content.SniffingRequest.MetadataOnly = w.sniffingConfig.MetadataOnly
-				content.SniffingRequest.RouteOnly = w.sniffingConfig.RouteOnly
-			}
-			ctx = session.ContextWithContent(ctx, content)
-			if err := w.proxy.Process(ctx, net.Network_UDP, conn, w.dispatcher); err != nil {
-				errors.LogInfoInner(ctx, err, "connection ends")
-			}
-			conn.Close()
-			// conn not removed by checker TODO may be lock worker here is better
-			if !conn.inactive {
-				conn.setInactive()
-				w.removeConn(id)
-			}
-		}()
-	}
-}
-
-func (w *udpWorker) removeConn(id connID) {
-	w.Lock()
-	delete(w.activeConn, id)
-	w.Unlock()
-}
-
-func (w *udpWorker) handlePackets() {
-	receive := w.hub.Receive()
-	for payload := range receive {
-		w.callback(payload.Payload, payload.Source, payload.Target)
-	}
-}
-
-func (w *udpWorker) clean() error {
-	nowSec := time.Now().Unix()
-	w.Lock()
-	defer w.Unlock()
-
-	if len(w.activeConn) == 0 {
-		return errors.New("no more connections. stopping...")
-	}
-
-	for addr, conn := range w.activeConn {
-		if nowSec-atomic.LoadInt64(&conn.lastActivityTime) > 2*60 {
-			if !conn.inactive {
-				conn.setInactive()
-				delete(w.activeConn, addr)
-			}
-			conn.Close()
-		}
-	}
-
-	if len(w.activeConn) == 0 {
-		w.activeConn = make(map[connID]*udpConn, 16)
-	}
-
-	return nil
-}
-
-func (w *udpWorker) Start() error {
-	w.activeConn = make(map[connID]*udpConn, 16)
-	ctx := context.Background()
-	h, err := udp.ListenUDP(ctx, w.address, w.port, w.stream, udp.HubCapacity(256))
-	if err != nil {
-		return err
-	}
-
-	w.cone = w.ctx.Value("cone").(bool)
-
-	w.checker = &task.Periodic{
-		Interval: time.Minute,
-		Execute:  w.clean,
-	}
-
-	w.hub = h
-	go w.handlePackets()
-	return nil
-}
-
-func (w *udpWorker) Close() error {
-	w.Lock()
-	defer w.Unlock()
-
-	var errs []interface{}
-
-	if w.hub != nil {
-		if err := w.hub.Close(); err != nil {
-			errs = append(errs, err)
-		}
-	}
-
-	if w.checker != nil {
-		if err := w.checker.Close(); err != nil {
-			errs = append(errs, err)
-		}
-	}
-
-	if err := common.Close(w.proxy); err != nil {
-		errs = append(errs, err)
-	}
-
-	if len(errs) > 0 {
-		return errors.New("failed to close all resources").Base(errors.New(serial.Concat(errs...)))
-	}
-	return nil
-}
-
-func (w *udpWorker) Port() net.Port {
-	return w.port
-}
-
-func (w *udpWorker) Proxy() proxy.Inbound {
-	return w.proxy
 }
 
 type dsWorker struct {

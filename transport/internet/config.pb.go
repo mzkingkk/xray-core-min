@@ -29,7 +29,6 @@ const (
 	TransportProtocol_WebSocket    TransportProtocol = 3
 	TransportProtocol_HTTP         TransportProtocol = 4
 	TransportProtocol_DomainSocket TransportProtocol = 5
-	TransportProtocol_HTTPUpgrade  TransportProtocol = 6
 )
 
 // Enum value maps for TransportProtocol.
@@ -40,7 +39,6 @@ var (
 		3: "WebSocket",
 		4: "HTTP",
 		5: "DomainSocket",
-		6: "HTTPUpgrade",
 	}
 	TransportProtocol_value = map[string]int32{
 		"TCP":          0,
@@ -48,7 +46,6 @@ var (
 		"WebSocket":    3,
 		"HTTP":         4,
 		"DomainSocket": 5,
-		"HTTPUpgrade":  6,
 	}
 )
 

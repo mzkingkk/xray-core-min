@@ -14,7 +14,6 @@ type TransportConfig struct {
 	DSConfig          *DomainSocketConfig `json:"dsSettings"`
 	GRPCConfig        *GRPCConfig         `json:"grpcSettings"`
 	GUNConfig         *GRPCConfig         `json:"gunSettings"`
-	HTTPUPGRADEConfig *HttpUpgradeConfig  `json:"httpupgradeSettings"`
 }
 
 // Build implements Buildable.
@@ -76,17 +75,6 @@ func (c *TransportConfig) Build() (*global.Config, error) {
 		config.TransportSettings = append(config.TransportSettings, &internet.TransportConfig{
 			ProtocolName: "grpc",
 			Settings:     serial.ToTypedMessage(gs),
-		})
-	}
-
-	if c.HTTPUPGRADEConfig != nil {
-		hs, err := c.HTTPUPGRADEConfig.Build()
-		if err != nil {
-			return nil, errors.New("failed to build HttpUpgrade config").Base(err)
-		}
-		config.TransportSettings = append(config.TransportSettings, &internet.TransportConfig{
-			ProtocolName: "httpupgrade",
-			Settings:     serial.ToTypedMessage(hs),
 		})
 	}
 

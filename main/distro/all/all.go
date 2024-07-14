@@ -43,7 +43,6 @@ import (
 	_ "github.com/xtls/xray-core/proxy/socks"
 	_ "github.com/xtls/xray-core/proxy/vless/inbound"
 	_ "github.com/xtls/xray-core/proxy/vless/outbound"
-	_ "github.com/xtls/xray-core/proxy/wireguard"
 
 	// Transports
 	_ "github.com/xtls/xray-core/transport/internet/domainsocket"
@@ -64,7 +63,6 @@ import (
 	_ "github.com/xtls/xray-core/transport/internet/headers/tls"
 	_ "github.com/xtls/xray-core/transport/internet/headers/utp"
 	_ "github.com/xtls/xray-core/transport/internet/headers/wechat"
-	_ "github.com/xtls/xray-core/transport/internet/headers/wireguard"
 
 	// JSON & TOML & YAML
 	_ "github.com/xtls/xray-core/main/json"

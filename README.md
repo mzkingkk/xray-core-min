@@ -10,7 +10,7 @@ xray的包越来越大，小内存设备快要没法玩了，所以在前人的�
 - [x] http，端口监听可用
 - [x] dokodemo-door，透明代理可用
 - [x] grpc
-- [x] dns，router相关均未删除
+- [x] router相关，没删但也没仔细测
 
 ## 支持的配置
 打勾的表示测试ok，未打勾的没好好测过，也许支持吧
@@ -20,7 +20,21 @@ xray的包越来越大，小内存设备快要没法玩了，所以在前人的�
 - [ ] VLESS TCP TLS_Vision
 
 ## 删除内容
-全在提交里面了，想要还原哪个模块，直接revert应该就行
+全在提交里面了，想要还原哪个模块，直接revert应该就行（如果冲突，记得拉分支处理）
+<details>
+<summary>v1.8.17.02-4.65m</summary>
+
+- [x] ~~delete utp~~
+- [x] ~~delete loopback~~
+- [x] ~~delete blackhole~~
+- [x] ~~delete bittorrent~~
+- [x] ~~delete dns and fakedns~~
+
+</details>
+
+<details>
+<summary>v1.8.17.01-4.76m</summary>
+
 - [x] ~~delete vmess~~
 - [x] ~~delete quic~~
 - [x] ~~delete trojan~~
@@ -39,6 +53,8 @@ xray的包越来越大，小内存设备快要没法玩了，所以在前人的�
 - [x] ~~delete socks~~
 - [x] ~~delete server.go~~
 - [x] ~~delete test.go~~
+
+</details>
 
 # Linux / macOS / WSL
 

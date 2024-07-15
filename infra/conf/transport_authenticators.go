@@ -7,7 +7,6 @@ import (
 	"github.com/xtls/xray-core/transport/internet/headers/http"
 	"github.com/xtls/xray-core/transport/internet/headers/noop"
 	"github.com/xtls/xray-core/transport/internet/headers/tls"
-	"github.com/xtls/xray-core/transport/internet/headers/utp"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -21,12 +20,6 @@ type NoOpConnectionAuthenticator struct{}
 
 func (NoOpConnectionAuthenticator) Build() (proto.Message, error) {
 	return new(noop.ConnectionConfig), nil
-}
-
-type UTPAuthenticator struct{}
-
-func (UTPAuthenticator) Build() (proto.Message, error) {
-	return new(utp.Config), nil
 }
 
 type DTLSAuthenticator struct{}

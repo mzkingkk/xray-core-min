@@ -1,149 +1,54 @@
-# Project X
+# 说明
 
-[Project X](https://github.com/XTLS) originates from XTLS protocol, providing a set of network tools such as [Xray-core](https://github.com/XTLS/Xray-core) and [REALITY](https://github.com/XTLS/REALITY).
+xray的包越来越大，小内存设备快要没法玩了，所以在前人的思路下自己删减搞一个能用的版本。
+尚未删除到极致，还有好多保留的待删除部分，有空了再研究研究。  
+修改前：29m  
+修改后：19m  
+压缩后：4.76m  
 
-[README](https://github.com/XTLS/Xray-core#readme) is open, so feel free to submit your project [here](https://github.com/XTLS/Xray-core/pulls).
+## 保留功能
+- [x] http，端口监听可用
+- [x] dokodemo-door，透明代理可用
+- [x] grpc
+- [x] dns，router相关均未删除
 
-## License
+## 支持的配置
+打勾的表示测试ok，未打勾的没好好测过，也许支持吧
+- [x] VLESS reality_gRPC
+- [ ] VLESS reality_vision
+- [ ] VLESS gRPC TLS
+- [ ] VLESS TCP TLS_Vision
 
-[Mozilla Public License Version 2.0](https://github.com/XTLS/Xray-core/blob/main/LICENSE)
+## 删除内容
+全在提交里面了，想要还原哪个模块，直接revert应该就行
+- [x] ~~delete vmess~~
+- [x] ~~delete quic~~
+- [x] ~~delete trojan~~
+- [x] ~~delete shadowsocks~~
+- [x] ~~delete splithttp~~
+- [x] ~~delete wireguard~~
+- [x] ~~delete wechat~~
+- [x] ~~delete kcp~~
+- [x] ~~delete httpupgrade~~
+- [x] ~~delete domainsocket~~
+- [x] ~~delete websocket~~
+- [x] ~~delete srtp~~
+- [x] ~~delete yaml~~
+- [x] ~~delete toml~~
+- [x] ~~delete udp~~
+- [x] ~~delete socks~~
+- [x] ~~delete server.go~~
+- [x] ~~delete test.go~~
 
-## Documentation
-
-[Project X Official Website](https://xtls.github.io)
-
-## Telegram
-
-[Project X](https://t.me/projectXray)
-
-[Project X Channel](https://t.me/projectXtls)
-
-## Installation
-
-- Linux Script
-  - [XTLS/Xray-install](https://github.com/XTLS/Xray-install) (**Official**)
-  - [tempest](https://github.com/team-cloudchaser/tempest) (supports [`systemd`](https://systemd.io) and [OpenRC](https://github.com/OpenRC/openrc); Linux-only)
-- Docker
-  - [ghcr.io/xtls/xray-core](https://ghcr.io/xtls/xray-core) (**Official**)
-  - [teddysun/xray](https://hub.docker.com/r/teddysun/xray)
-- Web Panel
-  - [X-UI-English](https://github.com/NidukaAkalanka/x-ui-english), [3X-UI](https://github.com/MHSanaei/3x-ui), [X-UI](https://github.com/alireza0/x-ui), [X-UI](https://github.com/diditra/x-ui)
-  - [Xray-UI](https://github.com/qist/xray-ui), [X-UI](https://github.com/sing-web/x-ui)
-  - [Hiddify](https://github.com/hiddify/hiddify-config)
-  - [Marzban](https://github.com/Gozargah/Marzban)
-  - [Libertea](https://github.com/VZiChoushaDui/Libertea)
-- One Click
-  - [Xray-REALITY](https://github.com/zxcvos/Xray-script), [xray-reality](https://github.com/sajjaddg/xray-reality), [reality-ezpz](https://github.com/aleskxyz/reality-ezpz)
-  - [Xray_bash_onekey](https://github.com/hello-yunshu/Xray_bash_onekey), [XTool](https://github.com/LordPenguin666/XTool)
-  - [v2ray-agent](https://github.com/mack-a/v2ray-agent), [Xray_onekey](https://github.com/wulabing/Xray_onekey), [ProxySU](https://github.com/proxysu/ProxySU)
-- Magisk
-  - [Xray4Magisk](https://github.com/Asterisk4Magisk/Xray4Magisk)
-  - [Xray_For_Magisk](https://github.com/E7KMbb/Xray_For_Magisk)
-- Homebrew
-  - `brew install xray`
-
-## Usage
-
-- Example
-  - [VLESS-XTLS-uTLS-REALITY](https://github.com/XTLS/REALITY#readme)
-  - [VLESS-TCP-XTLS-Vision](https://github.com/XTLS/Xray-examples/tree/main/VLESS-TCP-XTLS-Vision)
-  - [All-in-One-fallbacks-Nginx](https://github.com/XTLS/Xray-examples/tree/main/All-in-One-fallbacks-Nginx)
-- Xray-examples
-  - [XTLS/Xray-examples](https://github.com/XTLS/Xray-examples)
-  - [chika0801/Xray-examples](https://github.com/chika0801/Xray-examples)
-  - [lxhao61/integrated-examples](https://github.com/lxhao61/integrated-examples)
-- Tutorial
-  - [XTLS Vision](https://github.com/chika0801/Xray-install)
-  - [REALITY (English)](https://cscot.pages.dev/2023/03/02/Xray-REALITY-tutorial/)
-  - [XTLS-Iran-Reality (English)](https://github.com/SasukeFreestyle/XTLS-Iran-Reality)
-  - [Xray REALITY with 'steal oneself' (English)](https://computerscot.github.io/vless-xtls-utls-reality-steal-oneself.html)
-  - [Xray with WireGuard inbound (English)](https://g800.pages.dev/wireguard)
-
-## GUI Clients
-
-- OpenWrt
-  - [PassWall](https://github.com/xiaorouji/openwrt-passwall), [PassWall 2](https://github.com/xiaorouji/openwrt-passwall2)
-  - [ShadowSocksR Plus+](https://github.com/fw876/helloworld)
-  - [luci-app-xray](https://github.com/yichya/luci-app-xray) ([openwrt-xray](https://github.com/yichya/openwrt-xray))
-- Windows
-  - [v2rayN](https://github.com/2dust/v2rayN)
-  - [NekoRay](https://github.com/Matsuridayo/nekoray)
-  - [Furious](https://github.com/LorenEteval/Furious)
-  - [HiddifyN](https://github.com/hiddify/HiddifyN)
-  - [Invisible Man - Xray](https://github.com/InvisibleManVPN/InvisibleMan-XRayClient)
-- Android
-  - [v2rayNG](https://github.com/2dust/v2rayNG)
-  - [HiddifyNG](https://github.com/hiddify/HiddifyNG)
-  - [X-flutter](https://github.com/XTLS/X-flutter)
-- iOS & macOS arm64
-  - [FoXray](https://apps.apple.com/app/foxray/id6448898396)
-  - [Streisand](https://apps.apple.com/app/streisand/id6450534064)
-- macOS arm64 & x64
-  - [V2rayU](https://github.com/yanue/V2rayU)
-  - [V2RayXS](https://github.com/tzmax/V2RayXS)
-  - [Furious](https://github.com/LorenEteval/Furious)
-  - [FoXray](https://apps.apple.com/app/foxray/id6448898396)
-- Linux
-  - [v2rayA](https://github.com/v2rayA/v2rayA)
-  - [NekoRay](https://github.com/Matsuridayo/nekoray)
-  - [Furious](https://github.com/LorenEteval/Furious)
-
-## Others that support VLESS, XTLS, REALITY, XUDP, PLUX...
-
-- iOS & macOS arm64
-  - [Shadowrocket](https://apps.apple.com/app/shadowrocket/id932747118)
-- Xray Tools
-  - [xray-knife](https://github.com/lilendian0x00/xray-knife)
-- Xray Wrapper
-  - [XTLS/libXray](https://github.com/XTLS/libXray)
-  - [xtlsapi](https://github.com/hiddify/xtlsapi)
-  - [AndroidLibXrayLite](https://github.com/2dust/AndroidLibXrayLite)
-  - [XrayKit](https://github.com/arror/XrayKit)
-  - [Xray-core-python](https://github.com/LorenEteval/Xray-core-python)
-  - [xray-api](https://github.com/XVGuardian/xray-api)
-- [XrayR](https://github.com/XrayR-project/XrayR)
-  - [XrayR-release](https://github.com/XrayR-project/XrayR-release)
-  - [XrayR-V2Board](https://github.com/missuo/XrayR-V2Board)
-- [Clash.Meta](https://github.com/MetaCubeX/Clash.Meta)
-  - [Clash Verge](https://github.com/zzzgydi/clash-verge)
-  - [clashN](https://github.com/2dust/clashN)
-  - [Clash Meta for Android](https://github.com/MetaCubeX/ClashMetaForAndroid)
-  - [meta_for_ios](https://t.me/meta_for_ios)
-- [sing-box](https://github.com/SagerNet/sing-box)
-  - [installReality](https://github.com/BoxXt/installReality)
-  - [sbox-reality](https://github.com/Misaka-blog/sbox-reality)
-  - [sing-box-for-ios](https://github.com/SagerNet/sing-box-for-ios)
-
-## Contributing
-
-[Code of Conduct](https://github.com/XTLS/Xray-core/blob/main/CODE_OF_CONDUCT.md)
-
-## Credits
-
-- [Xray-core v1.0.0](https://github.com/XTLS/Xray-core/releases/tag/v1.0.0) was forked from [v2fly-core 9a03cc5](https://github.com/v2fly/v2ray-core/commit/9a03cc5c98d04cc28320fcee26dbc236b3291256), and we have made & accumulated a huge number of enhancements over time, check [the release notes for each version](https://github.com/XTLS/Xray-core/releases).
-- For third-party projects used in [Xray-core](https://github.com/XTLS/Xray-core), check your local or [the latest go.mod](https://github.com/XTLS/Xray-core/blob/main/go.mod).
-
-## Compilation
-
-### Windows (PowerShell)
-
-```powershell
-$env:CGO_ENABLED=0
-go build -o xray.exe -trimpath -ldflags "-s -w -buildid=" ./main
-```
-
-### Linux / macOS
+# Linux / macOS / WSL
 
 ```bash
-CGO_ENABLED=0 go build -o xray -trimpath -ldflags "-s -w -buildid=" ./main
+CGO_ENABLED=0 GOARCH=mipsle GOMIPS=softfloat go build -o xray -trimpath -ldflags "-s -w -buildid=" ./main
 ```
 
-### Reproducible Releases
+# 鸣谢
+原始代码全部来自xray-core，v1.8.17，这里只是删删删：  
+https://github.com/XTLS/Xray-core
 
-```bash
-make
-```
-
-## Stargazers over time
-
-[![Stargazers over time](https://starchart.cc/XTLS/Xray-core.svg)](https://starchart.cc/XTLS/Xray-core)
+思路来源是如下项目(原项目没研究出来怎么支持dokodemo-door且不会内存溢出，所以自己删删删，删出了本项目)：  
+https://github.com/wangz-code/xray-core-min

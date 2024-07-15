@@ -50,7 +50,7 @@ message SniffingConfig {
   bool enabled = 1;
 
   // Override target destination if sniff'ed protocol is in the given list.
-  // Supported values are "http", "tls", "fakedns".
+  // Supported values are "http", "tls".
   repeated string destination_override = 2;
   repeated string domains_excluded = 3;
 

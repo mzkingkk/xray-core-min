@@ -4,7 +4,6 @@ import (
 	"sort"
 
 	"github.com/xtls/xray-core/common/errors"
-	"github.com/xtls/xray-core/transport/internet/headers/dns"
 	"github.com/xtls/xray-core/transport/internet/headers/http"
 	"github.com/xtls/xray-core/transport/internet/headers/noop"
 	"github.com/xtls/xray-core/transport/internet/headers/tls"
@@ -28,19 +27,6 @@ type UTPAuthenticator struct{}
 
 func (UTPAuthenticator) Build() (proto.Message, error) {
 	return new(utp.Config), nil
-}
-
-type DNSAuthenticator struct {
-	Domain string `json:"domain"`
-}
-
-func (v *DNSAuthenticator) Build() (proto.Message, error) {
-	config := new(dns.Config)
-	config.Domain = "www.baidu.com"
-	if len(v.Domain) > 0 {
-		config.Domain = v.Domain
-	}
-	return config, nil
 }
 
 type DTLSAuthenticator struct{}

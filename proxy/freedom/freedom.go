@@ -12,7 +12,6 @@ import (
 	"github.com/pires/go-proxyproto"
 	"github.com/xtls/xray-core/common"
 	"github.com/xtls/xray-core/common/buf"
-	"github.com/xtls/xray-core/common/dice"
 	"github.com/xtls/xray-core/common/errors"
 	"github.com/xtls/xray-core/common/net"
 	"github.com/xtls/xray-core/common/platform"
@@ -21,7 +20,6 @@ import (
 	"github.com/xtls/xray-core/common/signal"
 	"github.com/xtls/xray-core/common/task"
 	"github.com/xtls/xray-core/core"
-	"github.com/xtls/xray-core/features/dns"
 	"github.com/xtls/xray-core/features/policy"
 	"github.com/xtls/xray-core/features/stats"
 	"github.com/xtls/xray-core/proxy"
@@ -35,8 +33,8 @@ var useSplice bool
 func init() {
 	common.Must(common.RegisterConfig((*Config)(nil), func(ctx context.Context, config interface{}) (interface{}, error) {
 		h := new(Handler)
-		if err := core.RequireFeatures(ctx, func(pm policy.Manager, d dns.Client) error {
-			return h.Init(config.(*Config), pm, d)
+		if err := core.RequireFeatures(ctx, func(pm policy.Manager) error {
+			return h.Init(config.(*Config), pm)
 		}); err != nil {
 			return nil, err
 		}
@@ -53,15 +51,13 @@ func init() {
 // Handler handles Freedom connections.
 type Handler struct {
 	policyManager policy.Manager
-	dns           dns.Client
 	config        *Config
 }
 
 // Init initializes the Handler with necessary parameters.
-func (h *Handler) Init(config *Config, pm policy.Manager, d dns.Client) error {
+func (h *Handler) Init(config *Config, pm policy.Manager) error {
 	h.config = config
 	h.policyManager = pm
-	h.dns = d
 
 	return nil
 }
@@ -75,25 +71,7 @@ func (h *Handler) policy() policy.Session {
 }
 
 func (h *Handler) resolveIP(ctx context.Context, domain string, localAddr net.Address) net.Address {
-	ips, err := h.dns.LookupIP(domain, dns.IPOption{
-		IPv4Enable: (localAddr == nil || localAddr.Family().IsIPv4()) && h.config.preferIP4(),
-		IPv6Enable: (localAddr == nil || localAddr.Family().IsIPv6()) && h.config.preferIP6(),
-	})
-	{ // Resolve fallback
-		if (len(ips) == 0 || err != nil) && h.config.hasFallback() && localAddr == nil {
-			ips, err = h.dns.LookupIP(domain, dns.IPOption{
-				IPv4Enable: h.config.fallbackIP4(),
-				IPv6Enable: h.config.fallbackIP6(),
-			})
-		}
-	}
-	if err != nil {
-		errors.LogInfoInner(ctx, err, "failed to get IP address for domain ", domain)
-	}
-	if len(ips) == 0 {
-		return nil
-	}
-	return net.IPAddress(ips[dice.Roll(len(ips))])
+	return nil
 }
 
 func isValidAddress(addr *net.IPOrDomain) bool {
@@ -145,8 +123,6 @@ func (h *Handler) Process(ctx context.Context, link *transport.Link, dialer inte
 					Port:    dialDest.Port,
 				}
 				errors.LogInfo(ctx, "dialing to ", dialDest)
-			} else if h.config.forceIP() {
-				return dns.ErrEmptyResponse
 			}
 		}
 

@@ -18,8 +18,6 @@ import (
 	_ "github.com/xtls/xray-core/app/observatory/command"
 
 	// Other optional features.
-	_ "github.com/xtls/xray-core/app/dns"
-	_ "github.com/xtls/xray-core/app/dns/fakedns"
 	_ "github.com/xtls/xray-core/app/log"
 	_ "github.com/xtls/xray-core/app/metrics"
 	_ "github.com/xtls/xray-core/app/policy"
@@ -35,7 +33,6 @@ import (
 
 	// Inbound and outbound proxies.
 	_ "github.com/xtls/xray-core/proxy/blackhole"
-	_ "github.com/xtls/xray-core/proxy/dns"
 	_ "github.com/xtls/xray-core/proxy/dokodemo"
 	_ "github.com/xtls/xray-core/proxy/freedom"
 	_ "github.com/xtls/xray-core/proxy/http"

@@ -9,7 +9,6 @@ import (
 	"github.com/xtls/xray-core/common/net"
 	"github.com/xtls/xray-core/common/net/cnc"
 	"github.com/xtls/xray-core/common/session"
-	"github.com/xtls/xray-core/features/dns"
 	"github.com/xtls/xray-core/features/outbound"
 	"github.com/xtls/xray-core/transport"
 	"github.com/xtls/xray-core/transport/internet/stat"
@@ -78,33 +77,15 @@ func DestIpAddress() net.IP {
 }
 
 var (
-	dnsClient dns.Client
 	obm       outbound.Manager
 )
 
 func lookupIP(domain string, strategy DomainStrategy, localAddr net.Address) ([]net.IP, error) {
-	if dnsClient == nil {
-		return nil, nil
-	}
-
-	ips, err := dnsClient.LookupIP(domain, dns.IPOption{
-		IPv4Enable: (localAddr == nil || localAddr.Family().IsIPv4()) && strategy.preferIP4(),
-		IPv6Enable: (localAddr == nil || localAddr.Family().IsIPv6()) && strategy.preferIP6(),
-	})
-	{ // Resolve fallback
-		if (len(ips) == 0 || err != nil) && strategy.hasFallback() && localAddr == nil {
-			ips, err = dnsClient.LookupIP(domain, dns.IPOption{
-				IPv4Enable: strategy.fallbackIP4(),
-				IPv6Enable: strategy.fallbackIP6(),
-			})
-		}
-	}
-
-	return ips, err
+	return nil, nil
 }
 
 func canLookupIP(ctx context.Context, dst net.Destination, sockopt *SocketConfig) bool {
-	if dst.Address.Family().IsIP() || dnsClient == nil {
+	if dst.Address.Family().IsIP() {
 		return false
 	}
 	return sockopt.DomainStrategy.hasStrategy()
@@ -166,7 +147,6 @@ func DialSystem(ctx context.Context, dest net.Destination, sockopt *SocketConfig
 	return effectiveSystemDialer.Dial(ctx, src, dest, sockopt)
 }
 
-func InitSystemDialer(dc dns.Client, om outbound.Manager) {
-	dnsClient = dc
+func InitSystemDialer(om outbound.Manager) {
 	obm = om
 }

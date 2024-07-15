@@ -234,7 +234,7 @@ type SniffingConfig struct {
 	// Whether or not to enable content sniffing on an inbound connection.
 	Enabled bool `protobuf:"varint,1,opt,name=enabled,proto3" json:"enabled,omitempty"`
 	// Override target destination if sniff'ed protocol is in the given list.
-	// Supported values are "http", "tls", "fakedns".
+	// Supported values are "http", "tls".
 	DestinationOverride []string `protobuf:"bytes,2,rep,name=destination_override,json=destinationOverride,proto3" json:"destination_override,omitempty"`
 	DomainsExcluded     []string `protobuf:"bytes,3,rep,name=domains_excluded,json=domainsExcluded,proto3" json:"domains_excluded,omitempty"`
 	// Whether should only try to sniff metadata without waiting for client input.

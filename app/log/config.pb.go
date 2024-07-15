@@ -83,7 +83,6 @@ type Config struct {
 	ErrorLogPath  string       `protobuf:"bytes,3,opt,name=error_log_path,json=errorLogPath,proto3" json:"error_log_path,omitempty"`
 	AccessLogType LogType      `protobuf:"varint,4,opt,name=access_log_type,json=accessLogType,proto3,enum=xray.app.log.LogType" json:"access_log_type,omitempty"`
 	AccessLogPath string       `protobuf:"bytes,5,opt,name=access_log_path,json=accessLogPath,proto3" json:"access_log_path,omitempty"`
-	EnableDnsLog  bool         `protobuf:"varint,6,opt,name=enable_dns_log,json=enableDnsLog,proto3" json:"enable_dns_log,omitempty"`
 }
 
 func (x *Config) Reset() {
@@ -151,13 +150,6 @@ func (x *Config) GetAccessLogPath() string {
 		return x.AccessLogPath
 	}
 	return ""
-}
-
-func (x *Config) GetEnableDnsLog() bool {
-	if x != nil {
-		return x.EnableDnsLog
-	}
-	return false
 }
 
 var File_app_log_config_proto protoreflect.FileDescriptor

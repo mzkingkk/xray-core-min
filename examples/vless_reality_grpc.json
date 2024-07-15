@@ -1,0 +1,81 @@
+{
+    "routing": {
+        "domainStrategy": "IPIfNonMatch",
+        "rules": [
+            {
+                "type": "field",
+                "ip": [
+                    "114.114.114.114",
+                    "223.5.5.5",
+                    "192.168.1.1",
+                    "127.0.0.1"
+                ],
+                "outboundTag": "direct"
+            }
+        ]
+    },
+    "outbound": {
+        "protocol": "vless",
+        "settings": {
+            "vnext": [
+                {
+                    "address": "服务器ip或域名",
+                    "port": 443,
+                    "users": [
+                        {
+                            "id": "修改为对应的uuid",
+                            "encryption": "none"
+                        }
+                    ]
+                }
+            ]
+        },
+        "streamSettings": {
+            "network": "grpc",
+            "security": "reality",
+            "realitySettings": {
+                "fingerprint": "chrome",
+                "serverName": "域名",
+                "publicKey": "请修改",
+                "shortId": "请修改"
+            },
+            "grpcSettings": {
+                "serviceName": "grpc",
+                "multiMode": true,
+                "idle_timeout": 60,
+                "health_check_timeout": 20
+            },
+            "sockopt": {
+                "mark": 255
+            }
+        },
+        "tag": "proxy"
+    },
+    "log": {
+        "loglevel": "warning"
+    },
+    "outboundDetour": [
+        {
+            "settings": {
+                "keep": ""
+            },
+            "protocol": "freedom",
+            "tag": "direct"
+        }
+    ],
+    "inbound": {
+        "sniffing": {
+            "enabled": true,
+            "destOverride": [
+                "http",
+                "tls"
+            ]
+        },
+        "port": "1080",
+        "protocol": "dokodemo-door",
+        "settings": {
+            "network": "tcp",
+            "followRedirect": true
+        }
+    }
+}

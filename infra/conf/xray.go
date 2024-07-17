@@ -395,8 +395,6 @@ type Config struct {
 	API              *APIConfig              `json:"api"`
 	Stats            *StatsConfig            `json:"stats"`
 	Reverse          *ReverseConfig          `json:"reverse"`
-	Observatory      *ObservatoryConfig      `json:"observatory"`
-	BurstObservatory *BurstObservatoryConfig `json:"burstObservatory"`
 }
 
 func (c *Config) findInboundTag(tag string) int {
@@ -445,14 +443,6 @@ func (c *Config) Override(o *Config, fn string) {
 	}
 	if o.Reverse != nil {
 		c.Reverse = o.Reverse
-	}
-
-	if o.Observatory != nil {
-		c.Observatory = o.Observatory
-	}
-
-	if o.BurstObservatory != nil {
-		c.BurstObservatory = o.BurstObservatory
 	}
 
 	// deprecated attrs... keep them for now
@@ -574,22 +564,6 @@ func (c *Config) Build() (*core.Config, error) {
 
 	if c.Reverse != nil {
 		r, err := c.Reverse.Build()
-		if err != nil {
-			return nil, err
-		}
-		config.App = append(config.App, serial.ToTypedMessage(r))
-	}
-
-	if c.Observatory != nil {
-		r, err := c.Observatory.Build()
-		if err != nil {
-			return nil, err
-		}
-		config.App = append(config.App, serial.ToTypedMessage(r))
-	}
-
-	if c.BurstObservatory != nil {
-		r, err := c.BurstObservatory.Build()
 		if err != nil {
 			return nil, err
 		}

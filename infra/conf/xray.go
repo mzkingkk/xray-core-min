@@ -393,7 +393,6 @@ type Config struct {
 	Transport        *TransportConfig        `json:"transport"`
 	Policy           *PolicyConfig           `json:"policy"`
 	API              *APIConfig              `json:"api"`
-	Metrics          *MetricsConfig          `json:"metrics"`
 	Stats            *StatsConfig            `json:"stats"`
 	Reverse          *ReverseConfig          `json:"reverse"`
 	Observatory      *ObservatoryConfig      `json:"observatory"`
@@ -440,9 +439,6 @@ func (c *Config) Override(o *Config, fn string) {
 	}
 	if o.API != nil {
 		c.API = o.API
-	}
-	if o.Metrics != nil {
-		c.Metrics = o.Metrics
 	}
 	if o.Stats != nil {
 		c.Stats = o.Stats
@@ -541,13 +537,6 @@ func (c *Config) Build() (*core.Config, error) {
 			return nil, err
 		}
 		config.App = append(config.App, serial.ToTypedMessage(apiConf))
-	}
-	if c.Metrics != nil {
-		metricsConf, err := c.Metrics.Build()
-		if err != nil {
-			return nil, err
-		}
-		config.App = append(config.App, serial.ToTypedMessage(metricsConf))
 	}
 	if c.Stats != nil {
 		statsConf, err := c.Stats.Build()

@@ -4,7 +4,6 @@ import (
 	"strings"
 
 	"github.com/xtls/xray-core/app/commander"
-	loggerservice "github.com/xtls/xray-core/app/log/command"
 	observatoryservice "github.com/xtls/xray-core/app/observatory/command"
 	handlerservice "github.com/xtls/xray-core/app/proxyman/command"
 	statsservice "github.com/xtls/xray-core/app/stats/command"
@@ -30,8 +29,6 @@ func (c *APIConfig) Build() (*commander.Config, error) {
 			services = append(services, serial.ToTypedMessage(&commander.ReflectionConfig{}))
 		case "handlerservice":
 			services = append(services, serial.ToTypedMessage(&handlerservice.Config{}))
-		case "loggerservice":
-			services = append(services, serial.ToTypedMessage(&loggerservice.Config{}))
 		case "statsservice":
 			services = append(services, serial.ToTypedMessage(&statsservice.Config{}))
 		case "observatoryservice":

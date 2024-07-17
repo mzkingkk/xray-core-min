@@ -1,7 +1,6 @@
 package all
 
 import (
-	"github.com/xtls/xray-core/main/commands/all/tls"
 	"github.com/xtls/xray-core/main/commands/base"
 )
 
@@ -10,8 +9,6 @@ import (
 func init() {
 	base.RootCommand.Commands = append(
 		base.RootCommand.Commands,
-		// cmdConvert,
-		tls.CmdTLS,
 		cmdUUID,
 		cmdX25519,
 	)

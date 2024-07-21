@@ -13,7 +13,6 @@ import (
 	"github.com/xtls/xray-core/common/protocol"
 	"github.com/xtls/xray-core/common/session"
 	"github.com/xtls/xray-core/common/signal"
-	"github.com/xtls/xray-core/features/stats"
 	"github.com/xtls/xray-core/proxy"
 	"github.com/xtls/xray-core/proxy/vless"
 )
@@ -226,7 +225,6 @@ func XtlsRead(reader buf.Reader, writer buf.Writer, timer *signal.ActivityTimer,
 // XtlsWrite filter and write xtls protocol
 func XtlsWrite(reader buf.Reader, writer buf.Writer, timer signal.ActivityUpdater, conn net.Conn, trafficState *proxy.TrafficState, ob *session.Outbound, ctx context.Context) error {
 	err := func() error {
-		var ct stats.Counter
 		for {
 			buffer, err := reader.ReadMultiBuffer()
 			if trafficState.WriterSwitchToDirectCopy {
@@ -238,15 +236,10 @@ func XtlsWrite(reader buf.Reader, writer buf.Writer, timer signal.ActivityUpdate
 						ob.CanSpliceCopy = 1
 					}
 				}
-				rawConn, _, writerCounter := proxy.UnwrapRawConn(conn)
-				writer = buf.NewWriter(rawConn)
-				ct = writerCounter
+				writer = buf.NewWriter(proxy.UnwrapRawConn(conn))
 				trafficState.WriterSwitchToDirectCopy = false
 			}
 			if !buffer.IsEmpty() {
-				if ct != nil {
-					ct.Add(int64(buffer.Len()))
-				}
 				timer.Update()
 				if werr := writer.WriteMultiBuffer(buffer); werr != nil {
 					return werr

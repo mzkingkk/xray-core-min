@@ -11,7 +11,6 @@ import (
 
 	"github.com/xtls/xray-core/app/dispatcher"
 	"github.com/xtls/xray-core/app/proxyman"
-	"github.com/xtls/xray-core/app/stats"
 	"github.com/xtls/xray-core/common/errors"
 	"github.com/xtls/xray-core/common/net"
 	"github.com/xtls/xray-core/common/serial"
@@ -27,7 +26,6 @@ var (
 	}, "protocol", "settings")
 
 	outboundConfigLoader = NewJSONConfigLoader(ConfigCreatorCache{
-		"freedom":     func() interface{} { return new(FreedomConfig) },
 		"http":        func() interface{} { return new(HTTPClientConfig) },
 		"vless":       func() interface{} { return new(VLessOutboundConfig) },
 	}, "protocol", "settings")
@@ -357,13 +355,6 @@ func (c *OutboundDetourConfig) Build() (*core.OutboundHandlerConfig, error) {
 	}, nil
 }
 
-type StatsConfig struct{}
-
-// Build implements Buildable.
-func (c *StatsConfig) Build() (*stats.Config, error) {
-	return &stats.Config{}, nil
-}
-
 type Config struct {
 	// Port of this Point server.
 	// Deprecated: Port exists for historical compatibility
@@ -393,11 +384,7 @@ type Config struct {
 	Transport        *TransportConfig        `json:"transport"`
 	Policy           *PolicyConfig           `json:"policy"`
 	API              *APIConfig              `json:"api"`
-	Metrics          *MetricsConfig          `json:"metrics"`
-	Stats            *StatsConfig            `json:"stats"`
 	Reverse          *ReverseConfig          `json:"reverse"`
-	Observatory      *ObservatoryConfig      `json:"observatory"`
-	BurstObservatory *BurstObservatoryConfig `json:"burstObservatory"`
 }
 
 func (c *Config) findInboundTag(tag string) int {
@@ -441,22 +428,8 @@ func (c *Config) Override(o *Config, fn string) {
 	if o.API != nil {
 		c.API = o.API
 	}
-	if o.Metrics != nil {
-		c.Metrics = o.Metrics
-	}
-	if o.Stats != nil {
-		c.Stats = o.Stats
-	}
 	if o.Reverse != nil {
 		c.Reverse = o.Reverse
-	}
-
-	if o.Observatory != nil {
-		c.Observatory = o.Observatory
-	}
-
-	if o.BurstObservatory != nil {
-		c.BurstObservatory = o.BurstObservatory
 	}
 
 	// deprecated attrs... keep them for now
@@ -542,20 +515,6 @@ func (c *Config) Build() (*core.Config, error) {
 		}
 		config.App = append(config.App, serial.ToTypedMessage(apiConf))
 	}
-	if c.Metrics != nil {
-		metricsConf, err := c.Metrics.Build()
-		if err != nil {
-			return nil, err
-		}
-		config.App = append(config.App, serial.ToTypedMessage(metricsConf))
-	}
-	if c.Stats != nil {
-		statsConf, err := c.Stats.Build()
-		if err != nil {
-			return nil, err
-		}
-		config.App = append(config.App, serial.ToTypedMessage(statsConf))
-	}
 
 	var logConfMsg *serial.TypedMessage
 	if c.LogConfig != nil {
@@ -585,22 +544,6 @@ func (c *Config) Build() (*core.Config, error) {
 
 	if c.Reverse != nil {
 		r, err := c.Reverse.Build()
-		if err != nil {
-			return nil, err
-		}
-		config.App = append(config.App, serial.ToTypedMessage(r))
-	}
-
-	if c.Observatory != nil {
-		r, err := c.Observatory.Build()
-		if err != nil {
-			return nil, err
-		}
-		config.App = append(config.App, serial.ToTypedMessage(r))
-	}
-
-	if c.BurstObservatory != nil {
-		r, err := c.BurstObservatory.Build()
 		if err != nil {
 			return nil, err
 		}

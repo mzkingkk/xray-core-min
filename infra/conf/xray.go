@@ -22,7 +22,6 @@ var (
 	inboundConfigLoader = NewJSONConfigLoader(ConfigCreatorCache{
 		"dokodemo-door": func() interface{} { return new(DokodemoConfig) },
 		"http":          func() interface{} { return new(HTTPServerConfig) },
-		"vless":         func() interface{} { return new(VLessInboundConfig) },
 	}, "protocol", "settings")
 
 	outboundConfigLoader = NewJSONConfigLoader(ConfigCreatorCache{

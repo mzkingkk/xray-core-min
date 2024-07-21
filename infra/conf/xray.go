@@ -27,7 +27,6 @@ var (
 	}, "protocol", "settings")
 
 	outboundConfigLoader = NewJSONConfigLoader(ConfigCreatorCache{
-		"freedom":     func() interface{} { return new(FreedomConfig) },
 		"http":        func() interface{} { return new(HTTPClientConfig) },
 		"vless":       func() interface{} { return new(VLessOutboundConfig) },
 	}, "protocol", "settings")

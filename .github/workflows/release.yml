@@ -223,11 +223,11 @@ jobs:
           path: |
             ./Xray-${{ env.ASSET_NAME }}/*
 
-      - name: Upload binaries to release
-        uses: svenstaro/upload-release-action@v2
-        if: github.event_name == 'release'
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: ./Xray-${{ env.ASSET_NAME }}.zip*
-          tag: ${{ github.ref }}
-          file_glob: true
+      # - name: Upload binaries to release
+      #   uses: svenstaro/upload-release-action@v2
+      #   if: github.event_name == 'release'
+      #   with:
+      #     repo_token: ${{ secrets.GITHUB_TOKEN }}
+      #     file: ./Xray-${{ env.ASSET_NAME }}.zip*
+      #     tag: ${{ github.ref }}
+      #     file_glob: true

@@ -20,7 +20,6 @@ import (
 	"github.com/xtls/xray-core/common/session"
 	"github.com/xtls/xray-core/common/signal"
 	"github.com/xtls/xray-core/common/task"
-	"github.com/xtls/xray-core/common/xudp"
 	"github.com/xtls/xray-core/core"
 	"github.com/xtls/xray-core/features/policy"
 	"github.com/xtls/xray-core/proxy"
@@ -197,9 +196,6 @@ func (h *Handler) Process(ctx context.Context, link *transport.Link, dialer inte
 
 		// default: serverWriter := bufferWriter
 		serverWriter := encoding.EncodeBodyAddons(bufferWriter, request, requestAddons, trafficState, ctx)
-		if request.Command == protocol.RequestCommandMux && request.Port == 666 {
-			serverWriter = xudp.NewPacketWriter(serverWriter, target, xudp.GetGlobalID(ctx))
-		}
 		timeoutReader, ok := clientReader.(buf.TimeoutReader)
 		if ok {
 			multiBuffer, err1 := timeoutReader.ReadMultiBufferTimeout(time.Millisecond * 500)
@@ -264,13 +260,6 @@ func (h *Handler) Process(ctx context.Context, link *transport.Link, dialer inte
 		serverReader := encoding.DecodeBodyAddons(conn, request, responseAddons)
 		if requestAddons.Flow == vless.XRV {
 			serverReader = proxy.NewVisionReader(serverReader, trafficState, ctx)
-		}
-		if request.Command == protocol.RequestCommandMux && request.Port == 666 {
-			if requestAddons.Flow == vless.XRV {
-				serverReader = xudp.NewPacketReader(&buf.BufferedReader{Reader: serverReader})
-			} else {
-				serverReader = xudp.NewPacketReader(conn)
-			}
 		}
 
 		if requestAddons.Flow == vless.XRV {

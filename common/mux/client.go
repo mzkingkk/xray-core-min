@@ -14,7 +14,6 @@ import (
 	"github.com/xtls/xray-core/common/session"
 	"github.com/xtls/xray-core/common/signal/done"
 	"github.com/xtls/xray-core/common/task"
-	"github.com/xtls/xray-core/common/xudp"
 	"github.com/xtls/xray-core/proxy"
 	"github.com/xtls/xray-core/transport"
 	"github.com/xtls/xray-core/transport/internet"
@@ -250,7 +249,7 @@ func fetchInput(ctx context.Context, s *Session, output buf.Writer) {
 		transferType = protocol.TransferTypePacket
 	}
 	s.transferType = transferType
-	writer := NewWriter(s.ID, ob.Target, output, transferType, xudp.GetGlobalID(ctx))
+	writer := NewWriter(s.ID, ob.Target, output, transferType)
 	defer s.Close(false)
 	defer writer.Close()
 

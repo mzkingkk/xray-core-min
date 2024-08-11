@@ -1,0 +1,73 @@
+{
+    "routing": {
+        "domainStrategy": "IPIfNonMatch",
+        "rules": [
+            {
+                "type": "field",
+                "ip": [
+                    "114.114.114.114",
+                    "223.5.5.5",
+                    "192.168.1.1",
+                    "127.0.0.1"
+                ],
+                "outboundTag": "direct"
+            }
+        ]
+    },
+    "outbound": {
+        "settings": {
+            "vnext": [
+                {
+                    "port": 443,
+                    "users": [
+                        {
+                            "id": "修改为对应的uuid",
+                            "level": 0,
+                            "flow": "xtls-rprx-vision",
+                            "encryption": "none"
+                        }
+                    ],
+                    "address": "服务器ip或域名"
+                }
+            ]
+        },
+        "mux": {
+            "enabled": false
+        },
+        "protocol": "vless",
+        "streamSettings": {
+            "network": "tcp",
+            "realitySettings": {
+                "fingerprint": "chrome",
+                "serverName": "域名",
+                "shortId": "请修改",
+                "publicKey": "请修改"
+            },
+            "security": "reality"
+        }
+    },
+    "log": {
+        "loglevel": "warning"
+    },
+    "inbounds": [
+        {
+            "sniffing": {
+                "enabled": true,
+                "destOverride": [
+                    "http",
+                    "tls"
+                ]
+            },
+            "port": 1080,
+            "protocol": "dokodemo-door",
+            "settings": {
+                "network": "tcp",
+                "followRedirect": true
+            }
+        },
+        {
+            "port": 10801,
+            "protocol": "http"
+        }
+    ]
+}

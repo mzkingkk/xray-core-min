@@ -9,21 +9,32 @@ xray的包越来越大，小内存设备快要没法玩了，所以在前人的�
 - [x] inbound->http，端口监听可用
 - [x] inbound->dokodemo-door，透明代理可用
 - [x] protocol->vless
-- [x] grpc/tls/http
+- [x] grpc/tls/xtls
 - [x] routing，没删但也没测
 
 ## 支持的配置->[查看](https://github.com/mzkingkk/xray-core-min/blob/main/examples/vless_reality_grpc.json)
 打勾的表示测试ok，未打勾的没好好测过，从配置上看应该是支持的  
-- [x] VLESS reality_gRPC
-- [ ] VLESS reality_vision
-- [x] VLESS gRPC TLS
+- [x] VLESS-gRPC-REALITY
+- [x] VLESS-TCP-XTLS-Vision-REALITY
+- [ ] VLESS gRPC TLS
 - [ ] VLESS TCP TLS_Vision
 
 ## 删除内容
 全在提交里面了，想要还原哪个模块，直接revert应该就行（如果冲突，记得拉分支处理）
 
 <details>
-<summary>v1.8.17.03-4.43m</summary>
+<summary>v1.8.17.04-4.40MB</summary>
+
+- [x] delete reverse
+- [x] Revert server.go
+- [x] delete vless-inbound
+- [x] delete debug.go
+- [x] delete reverse
+
+</details>
+
+<details>
+<summary>v1.8.17.03-4.43MB</summary>
 
 - [x] delete stats
 - [x] delete freedom
@@ -37,7 +48,7 @@ xray的包越来越大，小内存设备快要没法玩了，所以在前人的�
 </details>
 
 <details>
-<summary>v1.8.17.02-4.65m</summary>
+<summary>v1.8.17.02-4.65MB</summary>
 
 - [x] delete utp
 - [x] delete loopback
@@ -48,7 +59,7 @@ xray的包越来越大，小内存设备快要没法玩了，所以在前人的�
 </details>
 
 <details>
-<summary>v1.8.17.01-4.76m</summary>
+<summary>v1.8.17.01-4.76MB</summary>
 
 - [x] delete vmess
 - [x] delete quic

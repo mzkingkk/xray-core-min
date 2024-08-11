@@ -1,18 +1,12 @@
 package mux
 
 import (
-	"context"
-	"io"
-	"runtime"
 	"sync"
-	"time"
 
 	"github.com/xtls/xray-core/common"
 	"github.com/xtls/xray-core/common/buf"
-	"github.com/xtls/xray-core/common/errors"
 	"github.com/xtls/xray-core/common/net"
 	"github.com/xtls/xray-core/common/protocol"
-	"github.com/xtls/xray-core/transport/pipe"
 )
 
 type SessionManager struct {
@@ -154,7 +148,6 @@ type Session struct {
 	ID           uint16
 	transferType protocol.TransferType
 	closed       bool
-	XUDP         *XUDP
 }
 
 // Close closes all resources associated with this session.
@@ -168,24 +161,8 @@ func (s *Session) Close(locked bool) error {
 		return nil
 	}
 	s.closed = true
-	if s.XUDP == nil {
-		common.Interrupt(s.input)
-		common.Close(s.output)
-	} else {
-		// Stop existing handle(), then trigger writer.Close().
-		// Note that s.output may be dispatcher.SizeStatWriter.
-		s.input.(*pipe.Reader).ReturnAnError(io.EOF)
-		runtime.Gosched()
-		// If the error set by ReturnAnError still exists, clear it.
-		s.input.(*pipe.Reader).Recover()
-		XUDPManager.Lock()
-		if s.XUDP.Status == Active {
-			s.XUDP.Expire = time.Now().Add(time.Minute)
-			s.XUDP.Status = Expiring
-			errors.LogDebug(context.Background(), "XUDP put ", s.XUDP.GlobalID)
-		}
-		XUDPManager.Unlock()
-	}
+	common.Interrupt(s.input)
+	common.Close(s.output)
 	s.parent.Remove(locked, s.ID)
 	return nil
 }
@@ -204,38 +181,5 @@ const (
 	Expiring     = 2
 )
 
-type XUDP struct {
-	GlobalID [8]byte
-	Status   uint64
-	Expire   time.Time
-	Mux      *Session
-}
-
-func (x *XUDP) Interrupt() {
-	common.Interrupt(x.Mux.input)
-	common.Close(x.Mux.output)
-}
-
-var XUDPManager struct {
-	sync.Mutex
-	Map map[[8]byte]*XUDP
-}
-
 func init() {
-	XUDPManager.Map = make(map[[8]byte]*XUDP)
-	go func() {
-		for {
-			time.Sleep(time.Minute)
-			now := time.Now()
-			XUDPManager.Lock()
-			for id, x := range XUDPManager.Map {
-				if x.Status == Expiring && now.After(x.Expire) {
-					x.Interrupt()
-					delete(XUDPManager.Map, id)
-					errors.LogDebug(context.Background(), "XUDP del ", id)
-				}
-			}
-			XUDPManager.Unlock()
-		}
-	}()
 }

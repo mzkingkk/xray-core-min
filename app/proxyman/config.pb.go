@@ -603,10 +603,6 @@ type MultiplexingConfig struct {
 	Enabled bool `protobuf:"varint,1,opt,name=enabled,proto3" json:"enabled,omitempty"`
 	// Max number of concurrent connections that one Mux connection can handle.
 	Concurrency int32 `protobuf:"varint,2,opt,name=concurrency,proto3" json:"concurrency,omitempty"`
-	// Transport XUDP in another Mux.
-	XudpConcurrency int32 `protobuf:"varint,3,opt,name=xudpConcurrency,proto3" json:"xudpConcurrency,omitempty"`
-	// "reject" (default), "allow" or "skip".
-	XudpProxyUDP443 string `protobuf:"bytes,4,opt,name=xudpProxyUDP443,proto3" json:"xudpProxyUDP443,omitempty"`
 }
 
 func (x *MultiplexingConfig) Reset() {
@@ -653,20 +649,6 @@ func (x *MultiplexingConfig) GetConcurrency() int32 {
 		return x.Concurrency
 	}
 	return 0
-}
-
-func (x *MultiplexingConfig) GetXudpConcurrency() int32 {
-	if x != nil {
-		return x.XudpConcurrency
-	}
-	return 0
-}
-
-func (x *MultiplexingConfig) GetXudpProxyUDP443() string {
-	if x != nil {
-		return x.XudpProxyUDP443
-	}
-	return ""
 }
 
 type AllocationStrategy_AllocationStrategyConcurrency struct {

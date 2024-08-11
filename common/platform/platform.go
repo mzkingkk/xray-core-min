@@ -20,8 +20,6 @@ const (
 
 	BufferSize           = "xray.ray.buffer.size"
 	BrowserDialerAddress = "xray.browser.dialer"
-	XUDPLog              = "xray.xudp.show"
-	XUDPBaseKey          = "xray.xudp.basekey"
 )
 
 type EnvFlag struct {

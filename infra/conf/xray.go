@@ -371,7 +371,6 @@ type Config struct {
 	OutboundConfigs  []OutboundDetourConfig  `json:"outbounds"`
 	Transport        *TransportConfig        `json:"transport"`
 	Policy           *PolicyConfig           `json:"policy"`
-	API              *APIConfig              `json:"api"`
 }
 
 func (c *Config) findInboundTag(tag string) int {
@@ -412,10 +411,6 @@ func (c *Config) Override(o *Config, fn string) {
 	if o.Policy != nil {
 		c.Policy = o.Policy
 	}
-	if o.API != nil {
-		c.API = o.API
-	}
-
 	// deprecated attrs... keep them for now
 	if o.InboundConfig != nil {
 		c.InboundConfig = o.InboundConfig
@@ -490,14 +485,6 @@ func (c *Config) Build() (*core.Config, error) {
 			serial.ToTypedMessage(&proxyman.InboundConfig{}),
 			serial.ToTypedMessage(&proxyman.OutboundConfig{}),
 		},
-	}
-
-	if c.API != nil {
-		apiConf, err := c.API.Build()
-		if err != nil {
-			return nil, err
-		}
-		config.App = append(config.App, serial.ToTypedMessage(apiConf))
 	}
 
 	var logConfMsg *serial.TypedMessage

@@ -12,7 +12,7 @@ require (
 	go4.org/netipx v0.0.0-20231129151722-fdeea329fbba
 	golang.org/x/crypto v0.26.0
 	golang.org/x/net v0.28.0
-	golang.org/x/sys v0.23.0
+	golang.org/x/sys v0.24.0
 	google.golang.org/grpc v1.65.0
 	google.golang.org/protobuf v1.34.2
 	lukechampine.com/blake3 v1.3.0

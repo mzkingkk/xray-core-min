@@ -5,7 +5,7 @@ go 1.22
 require (
 	github.com/pires/go-proxyproto v0.7.0
 	github.com/refraction-networking/utls v1.6.7
-	github.com/sagernet/sing v0.4.2
+	github.com/sagernet/sing v0.4.3
 	github.com/seiflotfy/cuckoofilter v0.0.0-20220411075957-e3b120b3f5fb
 	github.com/v2fly/ss-bloomring v0.0.0-20210312155135-28617310f63e
 	github.com/xtls/reality v0.0.0-20240712055506-48f0b2d5ed6d
